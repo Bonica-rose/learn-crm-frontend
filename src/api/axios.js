@@ -1,6 +1,6 @@
 import axios from "axios";
 import { store } from "../app/store";
-import { logout } from "../features/auth/authSlice";
+import { onLogout } from "../features/auth/authSlice";
 
 // console.log(import.meta.env.VITE_API_URL);
 
@@ -15,7 +15,7 @@ api.interceptors.response.use(
     (error) => {
         if (error.response?.status === 401) {
             // dispatch logout or redirect to login
-            store.dispatch(logout());
+            store.dispatch(onLogout());
         }
 
         return Promise.reject(error);

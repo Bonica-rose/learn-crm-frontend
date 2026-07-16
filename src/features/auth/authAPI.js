@@ -10,6 +10,11 @@ export const loginAPI = async (userData) => {
     return response.data;
 };
 
+export const logoutAPI = async () => {
+    const response = await api.post("/auth/logout");
+    return response.data;
+};
+
 export const getLoggedInUser = async () => {
     const response = await api.get("/auth/me");
     return response.data;
