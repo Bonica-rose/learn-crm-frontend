@@ -1,6 +1,11 @@
 import api from "../../api/axios";
 
-export const usersAPI = async (userData) => {
-    const response = await api.post("/users", userData);
+export const getUsersAPI = async (userData) => {
+    const response = await api.get("/users", userData);
+    return response.data;
+};
+
+export const deleteUserAPI = async (id) => {
+    const response = await api.delete(`/users/${id}`);
     return response.data;
 };
