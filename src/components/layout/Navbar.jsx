@@ -55,7 +55,7 @@ const Navbar = () => {
                 </span>
                 {/* Position (e.g., Sales Executive) */}
                 <span className="text-xs text-gray-500">
-                    {user?.position || "No Position"}
+                    {user?.position || user?.job_title}
                 </span>
                 </div>
 

@@ -3,89 +3,110 @@ import {
     getCoreRowModel,
     getSortedRowModel,
     useReactTable,
+    getFilteredRowModel,
 } from "@tanstack/react-table";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-const DataTable = ({ columns, data }) => {
+const DataTable = ({ columns, data, search, roleFilter }) => {
     const [sorting, setSorting] = useState([]);
+    const [globalFilter, setGlobalFilter] = useState(search);
+    const [columnFilters, setColumnFilters] = useState([]);
+    useEffect(() => {
+        setGlobalFilter(search);
+    }, [search]);
+
+    useEffect(() => {
+        if (roleFilter) {
+        setColumnFilters([
+            {
+            id: "role",
+            value: roleFilter,
+            },
+        ]);
+        } else {
+        setColumnFilters([]);
+        }
+    }, [roleFilter]);
 
     const table = useReactTable({
         data,
         columns,
 
-        state: { sorting,},
+        state: { sorting, globalFilter, columnFilters },
 
         onSortingChange: setSorting,
+        onColumnFiltersChange: setColumnFilters,
 
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
     });
 
     return (
         <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
-            <div className="overflow-x-auto">
-                <table className="min-w-full">
-                    {/* Header */}
-                    <thead className="bg-gray-50">
-                    {table.getHeaderGroups().map((headerGroup) => (
-                        <tr key={headerGroup.id}>
-                        {headerGroup.headers.map((header) => (
-                            <th
-                            key={header.id}
-                            onClick={header.column.getToggleSortingHandler()}
-                            className="cursor-pointer border border-gray-500 bg-slate-900 px-6 py-3 text-left text-sm font-semibold text-gray-100 select-none"
-                            >
-                            <div className="flex items-center gap-2">
-                                {flexRender(
-                                header.column.columnDef.header,
-                                header.getContext(),
-                                )}
+        <div className="overflow-x-auto">
+            <table className="min-w-full">
+            {/* Header */}
+            <thead className="bg-gray-50">
+                {table.getHeaderGroups().map((headerGroup) => (
+                <tr key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => (
+                    <th
+                        key={header.id}
+                        onClick={header.column.getToggleSortingHandler()}
+                        className="cursor-pointer border border-gray-500 bg-slate-900 px-6 py-3 text-left text-sm font-semibold text-gray-100 select-none"
+                    >
+                        <div className="flex items-center gap-2">
+                        {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                        )}
 
-                                {{
-                                asc: "▲",
-                                desc: "▼",
-                                }[header.column.getIsSorted()] ?? ""}
-                            </div>
-                            </th>
-                        ))}
-                        </tr>
+                        {{
+                            asc: "▲",
+                            desc: "▼",
+                        }[header.column.getIsSorted()] ?? ""}
+                        </div>
+                    </th>
                     ))}
-                    </thead>
+                </tr>
+                ))}
+            </thead>
 
-                    {/* Body */}
-                    <tbody>
-                    {table.getRowModel().rows.length ? (
-                        table.getRowModel().rows.map((row) => (
-                        <tr
-                            key={row.id}
-                            className="border-b border-gray-300 last:border-b-0 hover:bg-gray-50"
-                        >
-                            {row.getVisibleCells().map((cell) => (
-                            <td
-                                key={cell.id}
-                                className="px-6 py-4 text-sm text-gray-700"
-                            >
-                                {flexRender(
-                                cell.column.columnDef.cell,
-                                cell.getContext(),
-                                )}
-                            </td>
-                            ))}
-                        </tr>
-                        ))
-                    ) : (
-                        <tr>
+            {/* Body */}
+            <tbody>
+                {table.getRowModel().rows.length ? (
+                table.getRowModel().rows.map((row) => (
+                    <tr
+                    key={row.id}
+                    className="border-b border-gray-300 last:border-b-0 hover:bg-gray-50"
+                    >
+                    {row.getVisibleCells().map((cell) => (
                         <td
-                            colSpan={columns.length}
-                            className="py-8 text-center text-gray-500"
+                        key={cell.id}
+                        className="px-6 py-4 text-sm text-gray-700"
                         >
-                            No records found.
+                        {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                        )}
                         </td>
-                        </tr>
-                    )}
-                    </tbody>
-                </table>
-            </div>
+                    ))}
+                    </tr>
+                ))
+                ) : (
+                <tr>
+                    <td
+                    colSpan={columns.length}
+                    className="py-8 text-center text-gray-500"
+                    >
+                    No records found.
+                    </td>
+                </tr>
+                )}
+            </tbody>
+            </table>
+        </div>
         </div>
     );
 };
