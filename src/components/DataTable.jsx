@@ -7,7 +7,7 @@ import {
 } from "@tanstack/react-table";
 import { useState, useEffect } from "react";
 
-const DataTable = ({ columns, data, search, roleFilter }) => {
+const DataTable = ({ columns, data, search, roleFilter, statusFilter }) => {
     const [sorting, setSorting] = useState([]);
     const [globalFilter, setGlobalFilter] = useState(search);
     const [columnFilters, setColumnFilters] = useState([]);
@@ -17,16 +17,23 @@ const DataTable = ({ columns, data, search, roleFilter }) => {
 
     useEffect(() => {
         if (roleFilter) {
-        setColumnFilters([
+            setColumnFilters([
             {
-            id: "role",
-            value: roleFilter,
+                id: "role",
+                value: roleFilter,
             },
-        ]);
+            ]);
+        } else if (statusFilter) {
+            setColumnFilters([
+            {
+                id: "status",
+                value: statusFilter,
+            },
+            ]);
         } else {
-        setColumnFilters([]);
+            setColumnFilters([]);
         }
-    }, [roleFilter]);
+    }, [roleFilter, statusFilter]);
 
     const table = useReactTable({
         data,
