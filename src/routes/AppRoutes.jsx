@@ -11,8 +11,12 @@ import Login from "../features/auth/Login";
 import Register from "../features/auth/Register";
 
 import Dashboard from "../pages/dashboard/Dashboard";
+
 import UsersList from "../pages/users/Users";
-// import CustomersList from "../pages/Customers";
+
+import CustomersList from "../pages/customers/Customers";
+import AddCustomer from "../pages/customers/AddCustomer";
+import EditCustomer from "../pages/customers/EditCustomer";
 
 export default function AppRoutes() {
     return (
@@ -31,7 +35,12 @@ export default function AppRoutes() {
                         <Route path="/users" element={<UsersList />} />
                     </Route>
 
-                    {/* <Route path="/customers" element={<CustomersList />} /> */}
+                    <Route element={<RoleRoute allowedRoles={["Admin", "Staff"]} />}>
+                        <Route path="/customers" element={<CustomersList />} />
+                        <Route path="/customers/add" element={<AddCustomer />} />
+                        <Route path="/customers/edit/:id" element={<EditCustomer />} />
+                    </Route>
+
                     <Route path="/unauthorized" element={<Unauthorized />} />
                     </Route>
                 </Route>
