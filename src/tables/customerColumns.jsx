@@ -32,8 +32,14 @@ export const customerColumns = ({ user, onDelete }) => {
     // Only Admin sees this column
     if (user.role === "Admin") {
         columns.push({
-        accessorKey: "createdBy.name",
-        header: "created By",
+            accessorKey: "createdBy.name",
+            header: "Created By",
+            cell: ({ row }) => (
+                <span>
+                <b>{row.original.createdBy?.role}</b> -{" "}
+                {row.original.createdBy?.name}
+                </span>
+            ),
         });
     }
         

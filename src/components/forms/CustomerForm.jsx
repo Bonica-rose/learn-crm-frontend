@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 const CustomerForm = ({ methods, onSubmit, loading = false, buttonText }) => {
     const btnLoadingText = (buttonText.includes('Update')) ? 'Updating...' : 'Saving';
 
@@ -104,17 +102,13 @@ const CustomerForm = ({ methods, onSubmit, loading = false, buttonText }) => {
             </div>
 
             <div className="flex justify-end gap-3">
-            <button type="button" className="rounded-lg border px-3 py-2">
-                Cancel
-            </button>
-
-            <button
-                type="submit"
-                disabled={loading}
-                className="rounded-lg bg-blue-700 px-3 py-2 text-white hover:bg-blue-800"
-            >
-                {loading ? btnLoadingText : buttonText}
-            </button>
+                <button
+                    type="submit"
+                    disabled={loading}
+                    className="rounded-lg bg-blue-800 px-3 py-2 text-white hover:bg-blue-900"
+                >
+                    {loading ? btnLoadingText : buttonText}
+                </button>
             </div>
         </form>
     );

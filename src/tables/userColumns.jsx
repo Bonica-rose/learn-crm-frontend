@@ -29,24 +29,27 @@ export const userColumns = ({ user, onDelete }) => {
         },
         {
             header: "Action",
-            cell: ({ row }) => (
-            <div className="flex gap-2">
-                {canDelete && row.original._id === user._id && (
-                <span className="rounded bg-slate-100 p-2 text-slate-600 hover:bg-slate-200">
-                    NA
-                </span>
-                )}
+            cell: ({ row }) => {
+                const isCurrentUser = row.original._id === user._id;
 
-                {canDelete && row.original._id !== user._id && (
-                <button
-                    onClick={() => onDelete(row.original._id)}
-                    className="rounded bg-red-100 p-2 text-red-600 hover:bg-red-200"
-                >
-                    <FaTrash />
-                </button>
-                )}
-            </div>
-            ),
+                return (
+                    <div className="flex gap-2">
+                    {canDelete &&
+                        (isCurrentUser ? (
+                        <span className="rounded bg-slate-100 px-2 py-1 text-slate-600">
+                            N/A
+                        </span>
+                        ) : (
+                        <button
+                            onClick={() => onDelete(row.original._id)}
+                            className="rounded bg-red-100 p-2 text-red-600 hover:bg-red-200"
+                        >
+                            <FaTrash />
+                        </button>
+                        ))}
+                    </div>
+                );
+            },
         },
     ];
 

@@ -3,6 +3,7 @@ import PageHeader from "../../components/PageHeader";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { getDashboardAPI } from "../../features/dashboard/dashboardAPI";
+import { Link } from "react-router-dom";
 
 const Dashboard = () => {
     const { user } = useSelector((state) => state.auth);
@@ -11,20 +12,22 @@ const Dashboard = () => {
 
     const loadAdminDashboard = async () => {
         try {
-        const res = await getDashboardAPI();
-        setAdminStats(res.dashboardData);
+            const res = await getDashboardAPI();
+            setAdminStats(res.dashboardData);
         } catch (error) {
-        console.log(error);
-        toast.error(
-            error.response?.data?.message ||
-            "Admin Dashboard data fetching failed!",
-        );
+            // console.log(error);
+            toast.error(
+                error.response?.data?.message ||
+                "Admin Dashboard data fetching failed!",
+            );
         }
     };
 
     useEffect(() => {
-        loadAdminDashboard();
-    }, []);
+        if (user) {
+            loadAdminDashboard();
+        }        
+    }, [user]);
 
     // console.log(adminStats);
 
@@ -73,13 +76,13 @@ const Dashboard = () => {
             <h2 className="mb-4 text-xl font-semibold">Quick Actions</h2>
 
             <div className="flex flex-wrap gap-4">
-            <button className="rounded bg-blue-600 px-5 py-2 text-white hover:bg-blue-700">
+            <Link to="/customers/add" className="rounded bg-blue-600 px-5 py-2 text-white hover:bg-blue-700">
                 Add Customer
-            </button>
+            </Link>
 
-            <button className="rounded bg-green-600 px-5 py-2 text-white hover:bg-green-700">
+            <Link to="/customers" className="rounded bg-green-600 px-5 py-2 text-white hover:bg-green-700">
                 View Customers
-            </button>
+            </Link>
             </div>
         </div>
         </div>

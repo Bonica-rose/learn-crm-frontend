@@ -1,40 +1,37 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { loginSchema } from "../../validations/authValidation";
 import { loginAPI } from "./authAPI";
 import { setUser } from "./authSlice";
+import toast from "react-hot-toast";
 
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
-
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+  const onSubmit = async (data) => {
     try {
       setLoading(true);
-      const res = await loginAPI(formData);
-      console.log(res);
-      console.log(res.user);
+      const res = await loginAPI(data);
       dispatch(setUser(res.user));
       navigate("/dashboard");
     } catch (error) {
-      console.log(error);
-      alert(error.response?.data?.message || "Login failed");
+      toast.error(error.response?.data?.message || "Login failed");
     } finally {
       setLoading(false);
     }
@@ -48,7 +45,7 @@ const Login = () => {
 
           <p className="text-sm text-gray-500">Sign in to your account</p>
         </div>
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-700">
               Email
@@ -57,10 +54,12 @@ const Login = () => {
               type="email"
               name="email"
               placeholder="Email"
-              value={formData.email}
-              onChange={handleChange}
+              {...register("email")}
               className="w-full rounded-lg border border-gray-300 px-4 py-1.5 outline-none transition focus:border-blue-500"
             />
+            {errors.email && (
+              <p className="text-sm text-red-600">{errors.email.message}</p>
+            )}
           </div>
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-700">
@@ -70,10 +69,14 @@ const Login = () => {
               type="password"
               name="password"
               placeholder="Password"
-              value={formData.password}
-              onChange={handleChange}
+              {...register("password")}
               className="w-full rounded-lg border border-gray-300 px-4 py-1.5 outline-none transition focus:border-blue-500"
             />
+            {errors.password && (
+              <p className="text-sm text-red-600">
+                {errors.password.message}
+              </p>
+            )}
           </div>
 
           <button

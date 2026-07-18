@@ -14,7 +14,7 @@ const StaffDashboard = () => {
             const res = await getDashboardAPI();
             setEmpStats(res.dashboardData);
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             toast.error(
                 error.response?.data?.message ||
                 "Employe Dashboard data fetching failed!",
@@ -23,8 +23,9 @@ const StaffDashboard = () => {
     };
 
     useEffect(() => {
+        if(user)
         loadEmpDashboard();
-    }, []);
+    }, [user]);
 
     // console.log(empStats);
     return (

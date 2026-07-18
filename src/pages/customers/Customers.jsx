@@ -5,7 +5,12 @@ import DataTable from "../../components/DataTable";
 import { customerColumns } from "../../tables/customerColumns";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { getCustomersAPI, deleteCustomerAPI } from "../../features/customers/customerAPI";
+import {
+    getCustomersAPI,
+    deleteCustomerAPI,
+    getAllCustomersAPI,
+    deleteCustomerForAdminAPI,
+} from "../../features/customers/customerAPI";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 
@@ -15,28 +20,42 @@ const Customers = () => {
     const [customers, setCustomers] = useState([]);
     const { user } = useSelector((state) => state.auth);
 
-    useEffect(() => {
-        async function fetchCustomers() {
+    const fetchCustomers = async () => {
         try {
-            const res = await getCustomersAPI();
+            let res;
+            if (user.role === "Admin") {
+                res = await getAllCustomersAPI();
+            } else {
+                res = await getCustomersAPI();
+            }
             setCustomers(res.customerDataList);
         } catch (error) {
-            toast.error(error.message || "Customer fetching failed!");
+            toast.error(
+                error.response?.data?.message || "Customer fetching failed!",
+            );
         }
-        }
+    }
 
-        fetchCustomers();
-    }, []);
-    console.log(customers);
+    useEffect(() => {
+        if (user) {
+            fetchCustomers();
+        }
+    }, [user]);
+    // console.log(customers);
 
     const handleDelete = async (id) => {
         const confirmDelete = window.confirm("Delete this customer?");
         if (!confirmDelete) return;
         try {
-            const res = await deleteCustomerAPI(id);
+            let res;
+            if (user.role === "Admin") {
+                res = await deleteCustomerForAdminAPI(id);
+            } else {
+                res = await deleteCustomerAPI(id);
+            }
             toast.success(res.message);
             // Refresh customers
-            fetchCustomers();
+            await fetchCustomers();
         } catch (error) {
             toast.error(
                 error.response?.data?.message || "Customer deletion failed!",

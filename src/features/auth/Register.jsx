@@ -1,42 +1,35 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useForm } from "react-hook-form";
+import { registerSchema } from "../../validations/authValidation";
+import toast from "react-hot-toast";
 import { registerAPI } from "./authAPI";
 
 const Register=() =>{
   const navigate = useNavigate();
-
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
-
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    setLoading(true);
-    setError("");
-
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(registerSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+    },
+  });
+  const onSubmit = async (data) => {
     try {
-      console.log(formData);
-      
-      const res = await registerAPI(formData);
-      alert(res.message);
+      setLoading(true);
+      const res = await registerAPI(data);
+      toast.success(res.message);
       navigate("/");
-    } catch (err) {
-      console.log(err);
-      setError(err.response?.data?.message || "Registration failed");
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Registration failed");
     } finally {
       setLoading(false);
     }
@@ -51,13 +44,7 @@ const Register=() =>{
           <p className="text-sm text-gray-500">Create your account</p>
         </div>
 
-        {error && (
-          <div className="mb-4 rounded bg-red-200 px-4 py-3 text-sm text-red-600">
-            {error}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-700">
               Name
@@ -66,12 +53,14 @@ const Register=() =>{
             <input
               type="text"
               name="name"
-              value={formData.name}
-              onChange={handleChange}
+              {...register("name")}
               placeholder="Enter your name"
               className="w-full rounded-lg border border-gray-300 px-4 py-1.5 outline-none transition focus:border-blue-500"
               required
             />
+            {errors.name && (
+              <p className="text-sm text-red-600">{errors.name.message}</p>
+            )}
           </div>
 
           <div>
@@ -82,12 +71,14 @@ const Register=() =>{
             <input
               type="email"
               name="email"
-              value={formData.email}
-              onChange={handleChange}
+              {...register("email")}
               placeholder="Enter your email"
               className="w-full rounded-lg border border-gray-300 px-4 py-1.5 outline-none transition focus:border-blue-500"
               required
             />
+            {errors.email && (
+              <p className="text-sm text-red-600">{errors.email.message}</p>
+            )}
           </div>
 
           <div>
@@ -98,12 +89,14 @@ const Register=() =>{
             <input
               type="password"
               name="password"
-              value={formData.password}
-              onChange={handleChange}
+              {...register("password")}
               placeholder="Enter your password"
               className="w-full rounded-lg border border-gray-300 px-4 py-1.5 outline-none transition focus:border-blue-500"
               required
             />
+            {errors.password && (
+              <p className="text-sm text-red-600">{errors.password.message}</p>
+            )}
           </div>
 
           <button

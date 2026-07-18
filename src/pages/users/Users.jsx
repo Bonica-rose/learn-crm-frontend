@@ -15,18 +15,20 @@ const Users = () => {
   const [users, setUsers] = useState([]);
   const { user } = useSelector((state) => state.auth);
 
-  useEffect(() => {
-    async function fetchUsers() {
-      try {
-        const res = await getUsersAPI();
-        setUsers(res.userDataList);
-      } catch (error) {
-        toast.error(error.message || "User fetching failed!");
-      }      
+  const fetchUsers = async () => {
+    try {
+      const res = await getUsersAPI();
+      setUsers(res.userDataList);
+    } catch (error) {
+      toast.error(error.response?.data?.message || "User fetching failed!");
     }
+  }
 
-    fetchUsers();
-  }, []);
+  useEffect(() => {
+    if (user) {
+      fetchUsers();
+    }
+  }, [user]);
   // console.log(users);
 
   const handleDelete = async (id) => {
@@ -36,7 +38,7 @@ const Users = () => {
       const res = await deleteUserAPI(id);
       toast.success(res.message);
       // Refresh users
-      fetchUsers();
+      await fetchUsers();
     } catch (error) {
       toast.error(error.response?.data?.message || "User deletion failed!");
     }
@@ -48,15 +50,6 @@ const Users = () => {
       <PageHeader
         title="Users"
         subtitle="Manage all system users."
-        action={
-          <Link
-            to=""
-            className="flex items-center gap-2 rounded-lg bg-blue-800 px-4 py-1.5 text-white hover:bg-blue-700"
-          >
-            <FaPlus />
-            Add User
-          </Link>
-        }
       />
 
       <div className="flex flex-col gap-2 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
