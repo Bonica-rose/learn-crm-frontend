@@ -7,11 +7,14 @@ import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { getUsersAPI, deleteUserAPI } from "../../features/users/userAPI";
 import toast from "react-hot-toast";
+import { useSelector } from "react-redux";
 
 const Users = () => {
   const [search, setSearch] = useState("");
   const [role, setRole] = useState("");
   const [users, setUsers] = useState([]);
+  const { user } = useSelector((state) => state.auth);
+
   useEffect(() => {
     async function fetchUsers() {
       try {
@@ -76,7 +79,7 @@ const Users = () => {
         />
 
         <DataTable
-          columns={userColumns({ onDelete: handleDelete })}
+          columns={userColumns({ user, onDelete: handleDelete })}
           data={users}
           search={search}
           roleFilter={role}

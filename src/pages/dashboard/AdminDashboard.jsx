@@ -1,18 +1,18 @@
 import { useSelector } from "react-redux";
-import PageHeader from "../components/PageHeader";
+import PageHeader from "../../components/PageHeader";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
-import { getDashboardAPI } from "../features/dashboard/dashboardAPI";
+import { getDashboardAPI } from "../../features/dashboard/dashboardAPI";
 
 const Dashboard = () => {
     const { user } = useSelector((state) => state.auth);
 
-    const [stats, setStats] = useState({});
+    const [adminStats, setAdminStats] = useState({});
 
-    const loadDashboard = async () => {
+    const loadAdminDashboard = async () => {
         try {
         const res = await getDashboardAPI();
-        setStats(res.dashboardData);
+        setAdminStats(res.dashboardData);
         } catch (error) {
         console.log(error);
         toast.error(
@@ -23,10 +23,10 @@ const Dashboard = () => {
     };
 
     useEffect(() => {
-        loadDashboard();
+        loadAdminDashboard();
     }, []);
 
-    // console.log(stats);
+    // console.log(adminStats);
 
     return (
         <div className="space-y-8">
@@ -39,7 +39,7 @@ const Dashboard = () => {
             <h2 className="text-sm font-medium text-gray-500">Total Users</h2>
 
             <p className="mt-3 text-3xl font-bold text-blue-600">
-                {stats?.totalUsers}
+                {adminStats?.totalUsers}
             </p>
             </div>
 
@@ -47,7 +47,7 @@ const Dashboard = () => {
             <h2 className="text-sm font-medium text-gray-500">Leads</h2>
 
             <p className="mt-3 text-3xl font-bold text-yellow-500">
-                {stats?.totalLeads}
+                {adminStats?.totalLeads}
             </p>
             </div>
 
@@ -55,7 +55,7 @@ const Dashboard = () => {
             <h2 className="text-sm font-medium text-gray-500">Customers</h2>
 
             <p className="mt-3 text-3xl font-bold text-green-600">
-                {stats?.totalCustomers}
+                {adminStats?.totalCustomers}
             </p>
             </div>
 
@@ -63,11 +63,11 @@ const Dashboard = () => {
             <h2 className="text-sm font-medium text-gray-500">Inactive</h2>
 
             <p className="mt-3 text-3xl font-bold text-red-600">
-                {stats?.inactiveCustomers}
+                {adminStats?.inactiveCustomers}
             </p>
             </div>
         </div>
-            
+
         {/* Quick Actions */}
         <div className="rounded-lg bg-white p-6 shadow">
             <h2 className="mb-4 text-xl font-semibold">Quick Actions</h2>

@@ -2,6 +2,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { onLogout } from "../../features/auth/authSlice";
 import { logoutAPI } from "../../features/auth/authAPI";
+import canAccess from "../../utils/canAccess";
 
 const Navbar = () => {
     const navigate = useNavigate();
@@ -32,17 +33,23 @@ const Navbar = () => {
 
             {/* Navigation */}
             <div className="flex items-center gap-6">
+                {canAccess(user.role, "dashboard:view") && (
                 <NavLink to="/dashboard" className={navLinkClass}>
-                Dashboard
+                    Dashboard
                 </NavLink>
+                )}
 
+                {canAccess(user.role, "user:view") && (
                 <NavLink to="/users" className={navLinkClass}>
-                Users
+                    Users
                 </NavLink>
+                )}
 
+                {canAccess(user.role, "customer:view") && (
                 <NavLink to="/customers" className={navLinkClass}>
-                Customers
+                    Customers
                 </NavLink>
+                )}
             </div>
 
             {/* User */}
@@ -61,7 +68,7 @@ const Navbar = () => {
 
                 <button
                 onClick={handleLogout}
-                className="rounded bg-red-500 px-4 py-2 text-sm text-white hover:bg-red-600 transition-colors"
+                className="rounded bg-red-500 px-4 py-2 text-sm text-white font-medium hover:bg-red-600 transition-colors"
                 >
                 Logout
                 </button>

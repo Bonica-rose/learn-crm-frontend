@@ -1,12 +1,16 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import ProtectedRoute from "../components/ProtectedRoute";
+import RoleRoute from "../components/RoleRoute";
 import MainLayout from "../components/layout/MainLayout";
+
+import Unauthorized from "../pages/errors/Unauthorized";
+import NotFound from "../pages/errors/NotFound";
 
 import Login from "../features/auth/Login";
 import Register from "../features/auth/Register";
 
-import Dashboard from "../pages/Dashboard";
+import Dashboard from "../pages/dashboard/Dashboard";
 import UsersList from "../pages/users/Users";
 // import CustomersList from "../pages/Customers";
 
@@ -14,18 +18,25 @@ export default function AppRoutes() {
     return (
         <BrowserRouter>
             <Routes>
-            {/* Public Routes */}
-            <Route path="/" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+                {/* Public Routes */}
+                <Route path="/" element={<Login />} />
+                <Route path="/register" element={<Register />} />
 
-            {/* Protected Routes */}
-            <Route element={<ProtectedRoute />}>
-                <Route element={<MainLayout />}>
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/users" element={<UsersList />} />
-                {/* <Route path="/customers" element={<CustomersList />} /> */}
+                {/* Protected Routes */}
+                <Route element={<ProtectedRoute />}>
+                    <Route element={<MainLayout />}>
+                    <Route path="/dashboard" element={<Dashboard />} />
+
+                    <Route element={<RoleRoute allowedRoles={["Admin"]} />}>
+                        <Route path="/users" element={<UsersList />} />
+                    </Route>
+
+                    {/* <Route path="/customers" element={<CustomersList />} /> */}
+                    <Route path="/unauthorized" element={<Unauthorized />} />
+                    </Route>
                 </Route>
-            </Route>
+
+                <Route path="*" element={<NotFound />} />
             </Routes>
         </BrowserRouter>
     );
